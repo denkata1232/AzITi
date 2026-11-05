@@ -1,0 +1,675 @@
+@model NiePostigame.Models.AidCampaign
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = $"{(Model?.Title ?? "Детайли")} — Социална платформа Аз и ти";
+
+    string rawTitle = Model?.Title ?? "Кампания";
+    string rawLogo = Model?.LogoUrl ?? "";
+    string logoSrc;
+
+    if (string.IsNullOrWhiteSpace(rawLogo))
+    {
+        logoSrc = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(rawTitle)}&background=588157&color=fff&size=128";
+    }
+    else if (rawLogo.StartsWith("http://") || rawLogo.StartsWith("https://"))
+    {
+        logoSrc = rawLogo;
+    }
+    else if (rawLogo.StartsWith("~/"))
+    {
+        logoSrc = Url.Content(rawLogo);
+    }
+    else if (!rawLogo.Contains("/"))
+    {
+        logoSrc = "/images/" + rawLogo;
+    }
+    else
+    {
+        logoSrc = "/" + rawLogo.TrimStart('/');
+    }
+
+    DateTime validFrom = Model?.ValidFrom ?? DateTime.Now;
+    DateTime validTo = Model?.ValidTo ?? DateTime.Now.AddMonths(1);
+    bool isActive = DateTime.Now >= validFrom && DateTime.Now <= validTo;
+}
+
+<!-- Fullscreen Overlay Loader с анимирания хамстер -->
+<div id="hamsterLoader" class="loader-overlay d-none">
+    <div class="loader-card text-center p-4">
+        <div class="wheel-and-hamster mx-auto mb-3">
+            <div class="wheel"></div>
+            <div class="hamster">
+                <div class="hamster__body">
+                    <div class="hamster__head">
+                        <div class="hamster__ear"></div>
+                        <div class="hamster__eye"></div>
+                        <div class="hamster__nose"></div>
+                    </div>
+                    <div class="hamster__limb hamster__limb--fr"></div>
+                    <div class="hamster__limb hamster__limb--fl"></div>
+                    <div class="hamster__limb hamster__limb--br"></div>
+                    <div class="hamster__limb hamster__limb--bl"></div>
+                    <div class="hamster__tail"></div>
+                </div>
+            </div>
+            <div class="spoke"></div>
+        </div>
+        <h5 class="fw-bold text-dark mb-1">Изпращане на заявление...</h5>
+        <p class="text-muted small mb-0">Генерираме вашата декларация и изпращаме документите през вашия Gmail.</p>
+    </div>
+</div>
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .details-glass {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .info-box {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1rem;
+        padding: 1.25rem;
+    }
+
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.85em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+
+    /* Fullscreen Overlay Loader & Hamster CSS */
+    .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader-card {
+        background: #ffffff;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        max-width: 380px;
+        width: 90%;
+    }
+
+    /* From Uiverse.io by Nawsome */ 
+    .wheel-and-hamster {
+      --dur: 1s;
+      position: relative;
+      width: 12em;
+      height: 12em;
+      font-size: 14px;
+    }
+
+    .wheel,
+    .hamster,
+    .hamster div,
+    .spoke {
+      position: absolute;
+    }
+
+    .wheel,
+    .spoke {
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wheel {
+      background: radial-gradient(100% 100% at center,hsla(0,0%,60%,0) 47.8%,hsl(0,0%,60%) 48%);
+      z-index: 2;
+    }
+
+    .hamster {
+      animation: hamster var(--dur) ease-in-out infinite;
+      top: 50%;
+      left: calc(50% - 3.5em);
+      width: 7em;
+      height: 3.75em;
+      transform: rotate(4deg) translate(-0.8em,1.85em);
+      transform-origin: 50% 0;
+      z-index: 1;
+    }
+
+    .hamster__head {
+      animation: hamsterHead var(--dur) ease-in-out infinite;
+      background: hsl(30,90%,55%);
+      border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
+      box-shadow: 0 -0.25em 0 hsl(30,90%,80%) inset,
+            0.75em -1.55em 0 hsl(30,90%,90%) inset;
+      top: 0;
+      left: -2em;
+      width: 2.75em;
+      height: 2.5em;
+      transform-origin: 100% 50%;
+    }
+
+    .hamster__ear {
+      animation: hamsterEar var(--dur) ease-in-out infinite;
+      background: hsl(0,90%,85%);
+      border-radius: 50%;
+      box-shadow: -0.25em 0 hsl(30,90%,55%) inset;
+      top: -0.25em;
+      right: -0.25em;
+      width: 0.75em;
+      height: 0.75em;
+      transform-origin: 50% 75%;
+    }
+
+    .hamster__eye {
+      animation: hamsterEye var(--dur) linear infinite;
+      background-color: hsl(0,0%,0%);
+      border-radius: 50%;
+      top: 0.375em;
+      left: 1.25em;
+      width: 0.5em;
+      height: 0.5em;
+    }
+
+    .hamster__nose {
+      background: hsl(0,90%,75%);
+      border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
+      top: 0.75em;
+      left: 0;
+      width: 0.2em;
+      height: 0.25em;
+    }
+
+    .hamster__body {
+      animation: hamsterBody var(--dur) ease-in-out infinite;
+      background: hsl(30,90%,90%);
+      border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
+      box-shadow: 0.1em 0.75em 0 hsl(30,90%,55%) inset,
+            0.15em -0.5em 0 hsl(30,90%,80%) inset;
+      top: 0.25em;
+      left: 2em;
+      width: 4.5em;
+      height: 3em;
+      transform-origin: 17% 50%;
+      transform-style: preserve-3d;
+    }
+
+    .hamster__limb--fr,
+    .hamster__limb--fl {
+      clip-path: polygon(0 0,100% 0,70% 80%,60% 100%,0% 100%,40% 80%);
+      top: 2em;
+      left: 0.5em;
+      width: 1em;
+      height: 1.5em;
+      transform-origin: 50% 0;
+    }
+
+    .hamster__limb--fr {
+      animation: hamsterFRLimb var(--dur) linear infinite;
+      background: linear-gradient(hsl(30,90%,80%) 80%,hsl(0,90%,75%) 80%);
+      transform: rotate(15deg) translateZ(-1px);
+    }
+
+    .hamster__limb--fl {
+      animation: hamsterFLLimb var(--dur) linear infinite;
+      background: linear-gradient(hsl(30,90%,90%) 80%,hsl(0,90%,85%) 80%);
+      transform: rotate(15deg);
+    }
+
+    .hamster__limb--br,
+    .hamster__limb--bl {
+      border-radius: 0.75em 0.75em 0 0;
+      clip-path: polygon(0 0,100% 0,100% 30%,70% 90%,70% 100%,30% 100%,40% 90%,0% 30%);
+      top: 1em;
+      left: 2.8em;
+      width: 1.5em;
+      height: 2.5em;
+      transform-origin: 50% 30%;
+    }
+
+    .hamster__limb--br {
+      animation: hamsterBRLimb var(--dur) linear infinite;
+      background: linear-gradient(hsl(30,90%,80%) 90%,hsl(0,90%,75%) 90%);
+      transform: rotate(-25deg) translateZ(-1px);
+    }
+
+    .hamster__limb--bl {
+      animation: hamsterBLLimb var(--dur) linear infinite;
+      background: linear-gradient(hsl(30,90%,90%) 90%,hsl(0,90%,85%) 90%);
+      transform: rotate(-25deg);
+    }
+
+    .hamster__tail {
+      animation: hamsterTail var(--dur) linear infinite;
+      background: hsl(0,90%,85%);
+      border-radius: 0.25em 50% 50% 0.25em;
+      box-shadow: 0 -0.2em 0 hsl(0,90%,75%) inset;
+      top: 1.5em;
+      right: -0.5em;
+      width: 1em;
+      height: 0.5em;
+      transform: rotate(30deg) translateZ(-1px);
+      transform-origin: 0.25em 0.25em;
+    }
+
+    .spoke {
+      animation: spoke var(--dur) linear infinite;
+      background: radial-gradient(100% 100% at center,hsl(0,0%,60%) 4.8%,hsla(0,0%,60%,0) 5%),
+            linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
+    }
+
+    @@keyframes hamster {
+      from, to { transform: rotate(4deg) translate(-0.8em,1.85em); }
+      50% { transform: rotate(0) translate(-0.8em,1.85em); }
+    }
+
+    @@keyframes hamsterHead {
+      from, 25%, 50%, 75%, to { transform: rotate(0); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(8deg); }
+    }
+
+    @@keyframes hamsterEye {
+      from, 90%, to { transform: scaleY(1); }
+      95% { transform: scaleY(0); }
+    }
+
+    @@keyframes hamsterEar {
+      from, 25%, 50%, 75%, to { transform: rotate(0); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(12deg); }
+    }
+
+    @@keyframes hamsterBody {
+      from, 25%, 50%, 75%, to { transform: rotate(0); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-2deg); }
+    }
+
+    @@keyframes hamsterFRLimb {
+      from, 25%, 50%, 75%, to { transform: rotate(50deg) translateZ(-1px); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-30deg) translateZ(-1px); }
+    }
+
+    @@keyframes hamsterFLLimb {
+      from, 25%, 50%, 75%, to { transform: rotate(-30deg); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(50deg); }
+    }
+
+    @@keyframes hamsterBRLimb {
+      from, 25%, 50%, 75%, to { transform: rotate(-60deg) translateZ(-1px); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(20deg) translateZ(-1px); }
+    }
+
+    @@keyframes hamsterBLLimb {
+      from, 25%, 50%, 75%, to { transform: rotate(20deg); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(-60deg); }
+    }
+
+    @@keyframes hamsterTail {
+      from, 25%, 50%, 75%, to { transform: rotate(30deg) translateZ(-1px); }
+      12.5%, 37.5%, 62.5%, 87.5% { transform: rotate(10deg) translateZ(-1px); }
+    }
+
+    @@keyframes spoke {
+      from { transform: rotate(0); }
+      to { transform: rotate(-1turn); }
+    }
+</style>
+
+<div class="container py-5" style="max-width: 900px;">
+    
+    <div class="mb-4">
+        <a asp-controller="AidCampaigns" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Обратно към всички кампании
+        </a>
+    </div>
+
+    <div class="details-glass p-4 p-md-5">
+        
+        <!-- HEADER WITH LOGO & STATUS -->
+        <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-4">
+            <img src="@logoSrc" 
+                 alt="@rawTitle" 
+                 style="width: 72px; height: 72px; object-fit: contain;" 
+                 class="rounded-3 bg-white p-2 border shadow-sm flex-shrink-0"
+                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(rawTitle)&background=588157&color=fff&size=128';" />
+
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                    @if (isActive)
+                    {
+                        <span class="badge bg-success rounded-pill px-3 py-1">Активна</span>
+                    }
+                    else if (DateTime.Now < validFrom)
+                    {
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Предстои</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary rounded-pill px-3 py-1">Изтекла</span>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.AidType))
+                    {
+                        <span class="badge rounded-pill px-3 py-1" style="background-color: #588157; color: white;">
+                            @Model.AidType
+                        </span>
+                    }
+                </div>
+                <h1 class="display-6 fw-bold text-dark mb-0">@rawTitle</h1>
+            </div>
+        </div>
+
+        <!-- DATES & REQUIREMENTS -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="info-box h-100">
+                    <small class="text-muted d-block fw-semibold mb-1">
+                        <i class="bi bi-calendar3 me-1 text-success"></i> Срок за кандидатстване
+                    </small>
+                    <span class="fw-bold text-dark fs-5">
+                        @validFrom.ToString("dd.MM.yyyy") — @validTo.ToString("dd.MM.yyyy")
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-box h-100">
+                    <small class="text-muted d-block fw-semibold mb-1">
+                        <i class="bi bi-person-check me-1 text-success"></i> Целева група / Изисквания
+                    </small>
+                    <span class="fw-bold text-dark fs-6">
+                        @(string.IsNullOrEmpty(Model?.SimplifiedRequirement) ? "Няма специфични изисквания" : Model.SimplifiedRequirement)
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-5">
+            <h4 class="fw-bold text-dark mb-3">Подробно описание</h4>
+            <div class="lead text-secondary fs-6" style="line-height: 1.8;">
+                @(string.IsNullOrEmpty(Model?.Description) ? "Няма предоставено описание." : Model.Description)
+            </div>
+        </div>
+
+        <!-- FORMS / APPLICATION LINKS -->
+        <div class="border-top pt-4">
+            <h4 class="fw-bold text-dark mb-3">Документи и Кандидатстване</h4>
+            
+            @if (Model?.CampaignForms != null && Model.CampaignForms.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 g-3">
+                    @foreach (var form in Model.CampaignForms)
+                    {
+                        <div class="col">
+                            <a href="@form.FormUrl" target="_blank" rel="noopener noreferrer" class="btn-3d">
+                                <span class="button_top">
+                                    <i class="bi bi-box-arrow-up-right me-2"></i> @(string.IsNullOrEmpty(form.Name) ? "Формуляр" : form.Name)
+                                </span>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Няма прикачени директни формуляри за тази кампания.</p>
+            }
+        </div>
+        
+    </div>
+
+    <!-- Секция за автоматично кандидатстване с Apple Glassmorphism стил -->
+    <div class="card border-0 shadow-lg mt-5 overflow-hidden" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border-radius: 1.25rem;">
+        <div class="p-4 p-md-5 text-white" style="background: linear-gradient(135deg, #344E41 0%, #588157 100%);">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 55px; height: 55px; font-size: 1.75rem;">
+                    <i class="bi bi-send-check-fill"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1">Автоматично кандидатстване</h3>
+                    <p class="mb-0 text-white-50">Изпратете формуляр, декларация и вашите документи директно от вашия Gmail с 1 клик.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show rounded-4 mb-4 shadow-sm" role="alert" style="background-color: #d8f3dc; color: #1b4332; border: none;">
+                    <i class="bi bi-check-circle-fill me-2 fs-5 align-middle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm" role="alert" style="background-color: #f8d7da; color: #842029; border: none;">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5 align-middle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model?.GoogleFormUrl))
+            {
+                <div class="mb-4 p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-google me-2 text-danger"></i> Външна Google Форма</h6>
+                        <p class="text-muted small mb-0">Тази кампания изисква попълване и на тяхната официална анкета.</p>
+                    </div>
+                    <a href="@Model.GoogleFormUrl" target="_blank" class="btn btn-outline-success rounded-pill px-4 fw-semibold">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Отвори форма
+                    </a>
+                </div>
+            }
+            @{
+                var missingDocuments =
+                    ViewBag.MissingDocuments as List<string>
+                    ?? new List<string>();
+
+                bool hasMissingDocuments = missingDocuments.Any();
+            }
+            @if (ViewBag.HasApplied == true)
+            {
+                <div class="p-4 rounded-4 text-center border" style="background-color: #d8f3dc; border-color: #b7e4c7 !important;">
+                    <i class="bi bi-patch-check-fill display-4 text-success d-block mb-2"></i>
+                    <h4 class="fw-bold text-success mb-2">Вие вече кандидатствахте за тази кампания!</h4>
+                    <p class="text-dark mb-0">Вашето заявление, автоматично генерирана декларация и налични документи от профила бяха успешно изпратени.</p>
+                </div>
+            }
+            else if (string.IsNullOrEmpty(Model?.ContactEmail))
+            {
+                <div class="alert alert-warning mb-0 rounded-4">
+                    <i class="bi bi-info-circle-fill me-2"></i> За тази кампания все още няма въведен директен имейл за автоматично кандидатстване.
+                </div>
+            }
+            else
+            {
+                <form id="applyForm" asp-controller="Application" asp-action="Submit" method="post" onsubmit="showHamsterLoader()">
+                    <input type="hidden" name="campaignId" value="@Model?.Id" />
+
+                    <h5 class="fw-bold mb-3" style="color: #344E41;">
+                        <i class="bi bi-check2-square me-2"></i> Вашите документи от личния профил
+                    </h5>
+
+                    <p class="text-muted small mb-3">Всички налични документи от вашия <a asp-controller="Profile" asp-action="Index" class="text-success fw-bold">Личен профил</a> ще бъдат автоматично приложени към имейла заедно с официалната декларация.</p>
+
+                    @{
+                        var missingDocuments =
+                            ViewBag.MissingDocuments as List<string>
+                            ?? new List<string>();
+
+                        var requiredDocuments = Model.RequiredDocuments
+                            .Select(x => x.DocumentType)
+                            .ToList();
+                    }
+                    @if (missingDocuments.Any())
+                    {
+                        <div class="alert alert-warning rounded-4 mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                            <strong>Не можете да кандидатствате все още.</strong>
+
+                            <p class="mb-2 mt-2">
+                                Липсващи задължителни документи:
+                                @string.Join(", ", missingDocuments)
+                            </p>
+
+                            <a asp-controller="Profile"
+                               asp-action="Index"
+                               class="btn btn-success rounded-pill">
+                                Качи липсващите документи
+                            </a>
+                        </div>
+                    }
+                    @if (requiredDocuments.Any())
+                    {
+                        <div class="p-4 rounded-4 bg-light border mb-4">
+                            <h5 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-clipboard-check text-success me-2"></i>
+                                Проверка на задължителните документи
+                            </h5>
+
+                            @foreach (var documentType in requiredDocuments)
+                            {
+                                bool isMissing = missingDocuments.Contains(
+                                    documentType,
+                                    StringComparer.OrdinalIgnoreCase);
+
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    @if (isMissing)
+                                    {
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                        <span class="text-danger fw-semibold">
+                                            @documentType — липсва
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <span class="text-success fw-semibold">
+                                            @documentType — наличен
+                                        </span>
+                                    }
+                                </div>
+                            }
+
+                            @if (missingDocuments.Any())
+                            {
+                                <div class="alert alert-warning rounded-3 mt-3 mb-0">
+                                    <strong>Необходими са още документи.</strong>
+                                    <p class="mb-2 mt-1">
+                                        Качете липсващите документи, за да кандидатствате.
+                                    </p>
+
+                                    <a asp-controller="Profile"
+                                       asp-action="Index"
+                                       class="btn btn-success rounded-pill">
+                                        <i class="bi bi-upload me-1"></i>
+                                        Към моя профил
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- GDPR ЧЕКБОКС ЗА СЪГЛАСИЕ -->
+
+
+                    <div class="form-check mb-4 p-3 rounded-3 bg-light border">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" id="campaignSubmitConsent" onchange="toggleSubmitButton()" required />
+                        <label class="form-check-label small text-dark fw-medium" for="campaignSubmitConsent">
+                            Потвърждавам, че данните ми са верни и давам съгласието си личната ми декларация (включително ЕГН, телефон и IBAN) и приложените документи да бъдат изпратени по имейл до организаторите на тази кампания.
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" id="submitAppBtn" class="btn btn-success px-5 py-3 rounded-pill fw-bold shadow-lg d-flex align-items-center gap-2" data-has-missing-documents="@hasMissingDocuments.ToString().ToLowerInvariant()" style="background-color: #344E41; border: none;" disabled>
+                            <i class="bi bi-envelope-arrow-up-fill fs-5"></i> Изпрати заявление и документи
+                        </button>
+                    </div>
+                </form>
+            }
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSubmitButton() {
+      const consentCheckbox =
+        document.getElementById("campaignSubmitConsent");
+
+    const submitButton =
+        document.getElementById("submitAppBtn");
+
+        if (!consentCheckbox || !submitButton) {
+        return;
+        }
+
+        const hasMissingDocuments =
+            submitButton.dataset.hasMissingDocuments === "true";
+
+        submitButton.disabled =
+            !consentCheckbox.checked || hasMissingDocuments;
+    }
+
+    function showHamsterLoader() {
+        document.getElementById('hamsterLoader').classList.remove('d-none');
+    }
+        document.addEventListener("DOMContentLoaded", function () {
+        toggleSubmitButton();
+    });
+</script>

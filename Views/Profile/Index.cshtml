@@ -1,0 +1,497 @@
+@model NiePostigame.Models.UserProfile
+
+@{
+    ViewData["Title"] = "Моят профил — Социална платформа Аз и ти";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .hero-glass {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.25s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        box-shadow: 0 12px 28px rgba(52, 78, 65, 0.15);
+    }
+
+    .partner-banner {
+        background: rgba(52, 78, 65, 0.88);
+        color: white;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Същият 3D бутон като в Home/Index */
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        --button_text_color: #344E41;
+        --button_hover_color: #b5c29e;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.85em 1.75em;
+        background: var(--button_color);
+        color: var(--button_text_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: var(--button_hover_color);
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+
+    /* Варианти */
+    .btn-3d-danger {
+        --button_color: #e63946;
+        --button_hover_color: #f04855;
+        --button_outline_color: #7f0000;
+        --button_text_color: #ffffff;
+        font-size: 14px;
+    }
+
+    .btn-3d-danger .button_top {
+        padding: 0.5em 1.1em;
+    }
+
+    .btn-3d-light {
+        --button_color: #DAD7CD;
+        --button_hover_color: #e6e3da;
+    }
+
+    .btn-3d-file {
+        --button_color: #ffffff;
+        --button_hover_color: #f1f3f5;
+        font-size: 14px;
+    }
+
+    .btn-3d-file .button_top {
+        padding: 0.45em 1em;
+    }
+
+    /* Полета за въвеждане */
+    .custom-input-3d {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+        transition: all 0.2s ease;
+    }
+
+    .custom-input-3d:focus {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(88, 129, 87, 0.3) !important;
+        background-color: #ffffff !important;
+    }
+
+    /* Анимации */
+    .fade-in-element {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    .fade-in-element.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .hero-fade-in {
+        animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes heroFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- HERO SECTION -->
+    <div class="hero-glass p-4 p-md-5 mb-5 text-center position-relative overflow-hidden hero-fade-in">
+        <div class="mb-3">
+            <span class="badge px-3 py-2 rounded-pill fw-semibold" style="background-color: #588157; color: white;">
+                <i class="bi bi-person-badge-fill text-warning me-1"></i> Личен кабинет
+            </span>
+        </div>
+
+        <h1 class="display-4 fw-bold text-dark mb-3 tracking-tight">
+            Моят профил и досие
+        </h1>
+
+        <p class="lead text-secondary mx-auto mb-4" style="max-width: 760px; font-size: 1.2rem;">
+            Управлявайте вашите данни и необходимите документи за социални помощи на едно място.
+        </p>
+
+        <div class="row g-3 justify-content-center pt-3 border-top mt-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <h2 class="fw-bold text-dark mb-0">@(Model.Documents != null ? Model.Documents.Count : 0)</h2>
+                    <small class="text-muted fw-medium">Прикачени документи</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <h2 class="fw-bold text-dark mb-0">@(string.IsNullOrWhiteSpace(Model.Egn) ? "Липсва" : "Попълнено")</h2>
+                    <small class="text-muted fw-medium">ЕГН</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Известия за успех или грешка -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 mb-4" role="alert" style="background-color: #d8f3dc; color: #1b4332;">
+            <i class="bi bi-check-circle-fill me-2 fs-5 align-middle"></i> <strong>Успех!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm border-0 mb-4" role="alert" style="background-color: #f8d7da; color: #842029;">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5 align-middle"></i> <strong>Внимание!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-action="Update" method="post" enctype="multipart/form-data">
+
+        
+        <!-- СЕКЦИЯ 1: ОСНОВНИ ДАННИ -->
+        <div class="feature-card p-4 p-md-5 mb-5 fade-in-element">
+            <h4 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-card-text text-success"></i>
+                Основни данни
+            </h4>
+
+            <div class="row g-3">
+                <!-- Име -->
+                <div class="col-md-4">
+                    <label asp-for="FirstName"
+                           class="form-label fw-semibold text-secondary">
+                        Име
+                    </label>
+                    <input asp-for="FirstName"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="Въведете име"
+                           required />
+                </div>
+
+                <!-- Презиме -->
+                <div class="col-md-4">
+                    <label asp-for="MiddleName"
+                           class="form-label fw-semibold text-secondary">
+                        Презиме
+                    </label>
+                    <input asp-for="MiddleName"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="Въведете презиме" />
+                </div>
+
+                <!-- Фамилия -->
+                <div class="col-md-4">
+                    <label asp-for="LastName"
+                           class="form-label fw-semibold text-secondary">
+                        Фамилия
+                    </label>
+                    <input asp-for="LastName"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="Въведете фамилия"
+                           required />
+                </div>
+
+                <!-- ЕГН -->
+                <div class="col-md-6 mt-3">
+                    <label asp-for="Egn"
+                           class="form-label fw-semibold text-secondary">
+                        ЕГН
+                    </label>
+                    <input asp-for="Egn"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="ЕГН (10 цифри)"
+                           maxlength="10"
+                           required />
+                    <span asp-validation-for="Egn"
+                          class="text-danger small ms-3 mt-1 d-block"></span>
+                </div>
+
+                <!-- Телефонен номер -->
+                <div class="col-md-6 mt-3">
+                    <label asp-for="PhoneNumber"
+                           class="form-label fw-semibold text-secondary">
+                        <i class="bi bi-telephone-fill me-1 text-success"></i>
+                        Телефонен номер
+                    </label>
+                    <input asp-for="PhoneNumber"
+                           type="tel"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="+359 888 123 456"
+                           autocomplete="tel" />
+                    <span asp-validation-for="PhoneNumber"
+                          class="text-danger small ms-3 mt-1 d-block"></span>
+                </div>
+
+                <!-- IBAN -->
+                <div class="col-12 mt-3">
+                    <label asp-for="Iban"
+                           class="form-label fw-semibold text-secondary">
+                        <i class="bi bi-bank me-1 text-success"></i>
+                        Банкова сметка (IBAN)
+                    </label>
+                    <input asp-for="Iban"
+                           class="form-control rounded-pill px-3 py-2 border-light bg-light custom-input-3d"
+                           placeholder="BG00 XXXX 0000 0000 0000 00"
+                           maxlength="42"
+                           autocomplete="off"
+                           spellcheck="false" />
+                    <span asp-validation-for="Iban"
+                          class="text-danger small ms-3 mt-1 d-block"></span>
+                    <small class="text-muted ms-3">
+                        Въведете IBAN на банковата сметка,
+                        по която желаете да получавате средства.
+                    </small>
+                </div>
+            </div>
+
+            <!-- ИНФОРМАЦИЯ ЗА ЗАЩИТА НА ДАННИТЕ И GDPR СЪГЛАСИЕ -->
+            <div class="mt-4 p-3 rounded-4 bg-light border border-success-subtle">
+                <div class="d-flex align-items-start gap-2 mb-2">
+                    <i class="bi bi-shield-lock-fill text-success fs-5"></i>
+
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">
+                            Защита на вашите лични данни
+                        </h6>
+
+                        <p class="small text-muted mb-0">
+                            Вашите три имена, ЕГН, телефонен номер,
+                            IBAN и приложени документи се съхраняват
+                            криптирани и се обработват за целите на
+                            кандидатстването за социална подкрепа.
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="my-2 text-muted opacity-25">
+
+                <div class="form-check ms-1 mt-2">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="profileGdprConsent"
+                           required />
+
+                    <label class="form-check-label small fw-semibold text-dark"
+                           for="profileGdprConsent">
+                        Давам съгласието си предоставените лични
+                        данни (включително ЕГН, телефон и IBAN)
+                        да се обработват за целите на подаване
+                        на заявления за социална подкрепа.
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- СЕКЦИЯ 2: ДОКУМЕНТИ -->
+        <div class="feature-card p-4 p-md-5 mb-5 fade-in-element">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0 d-flex align-items-center gap-2 text-dark">
+                    <i class="bi bi-file-earmark-medical-fill text-success"></i> Прикачени документи
+                </h4>
+                <span class="badge rounded-pill px-3 py-2" style="background-color: #588157; color: white;">
+                    @(Model.Documents != null ? Model.Documents.Count : 0) документа
+                </span>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="table-responsive m-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-uppercase text-muted small">
+                            <tr>
+                                <th class="py-3 ps-4">Тип документ</th>
+                                <th class="py-3">Файл</th>
+                                <th class="py-3">Дата на качване</th>
+                                <th class="py-3 text-end pe-4">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Documents != null && Model.Documents.Any())
+                            {
+                                foreach (var doc in Model.Documents)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-semibold text-dark">
+                                            <span class="badge bg-light text-success border px-3 py-2 rounded-pill">
+                                                <i class="bi bi-check2-circle me-1"></i> @doc.DocumentType
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(doc.FilePath))
+                                            {
+                                                
+                                                <a asp-controller="Profile"
+                                                   asp-action="DownloadDocument"
+                                                   asp-route-id="@doc.Id"
+                                                   class="btn-3d btn-3d-file">
+                                                    <span class="button_top">
+                                                        <i class="bi bi-file-earmark-arrow-down-fill me-1"></i>
+                                                        @(doc.OriginalFileName ?? "Изтегли документа")
+                                                    </span>
+                                                </a>
+
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">Няма прикачен файл</span>
+                                            }
+                                        </td>
+                                        <td class="text-muted small">
+                                            <i class="bi bi-calendar3 me-1"></i> @doc.UploadedAt.ToString("dd.MM.yyyy г.")
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button type="submit" formaction="@Url.Action("DeleteDocument", "Profile", new { id = doc.Id })" class="btn-3d btn-3d-danger">
+                                                <span class="button_top">
+                                                    <i class="bi bi-trash-fill me-1"></i> Изтрий
+                                                </span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <div class="py-3">
+                                            <i class="bi bi-folder2-open display-6 text-black-50 d-block mb-2"></i>
+                                            <span>Все още нямате добавени документи в системата. Използвайте формата по-долу.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- СЕКЦИЯ 3: ПРИКАЧВАНЕ НА НОВ ДОКУМЕНТ -->
+        <div class="partner-banner p-4 p-md-5 mb-5 shadow-lg fade-in-element">
+            <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-2">Нов документ</span>
+            <h4 class="fw-bold text-white mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-cloud-arrow-up-fill"></i> Прикачване на нов документ
+            </h4>
+
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small text-light opacity-75 fw-semibold">Изберете вид документ</label>
+                    <select name="newDocumentType" class="form-select rounded-pill px-3 border-light bg-white shadow-sm custom-input-3d">
+                        <option value="">-- Изберете от списъка --</option>
+                        <option value="Смъртен акт">Смъртен акт</option>
+                        <option value="ТЕЛК">ТЕЛК решения</option>
+                        <option value="Уверение за студент">Уверение за студент</option>
+                        <option value="Уверение за ученик">Уверение за ученик</option>
+                        <option value="Друго">Друго официално удостоверение</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small text-light opacity-75 fw-semibold">Файл (PDF, Снимка или Скан)</label>
+                    <input type="file" name="documentFile" class="form-control rounded-pill px-3 border-light bg-white shadow-sm custom-input-3d" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn-3d btn-3d-light w-100">
+                        <span class="button_top text-center">
+                            <i class="bi bi-plus-lg me-1"></i> Прикачи
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ГЛАВЕН БУТОН ЗА ЗАПИС -->
+        <div class="d-flex justify-content-end fade-in-element">
+            <button type="submit" class="btn-3d">
+                <span class="button_top">
+                    <i class="bi bi-check-circle-fill me-2"></i> Запази всички промени
+                </span>
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { root: null, rootMargin: "0px", threshold: 0.15 });
+
+            document.querySelectorAll(".fade-in-element").forEach(el => observer.observe(el));
+        });
+    </script>
+}

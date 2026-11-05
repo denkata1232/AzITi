@@ -1,0 +1,181 @@
+@model NiePostigame.Models.AidCampaign
+
+@{
+    ViewData["Title"] = "Админ Панел — Редактиране на кампания";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .admin-card {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="admin-card p-4 p-md-5">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <div>
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-1">Редактиране</span>
+                <h2 class="fw-bold text-dark mb-0">@Model.Title</h2>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-dark rounded-pill fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Назад към списъка
+            </a>
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Заглавие:</label>
+                    <input asp-for="Title" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Тип подкрепа (AidType):</label>
+                    <input asp-for="AidType" class="form-control" placeholder="Стипендия / Финансова / Материална" />
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold">Описание:</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Основни изисквания:</label>
+                    <input asp-for="SimplifiedRequirement" class="form-control" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Лого (URL или име на файл):</label>
+                    <input asp-for="LogoUrl" class="form-control" />
+                </div>
+
+                <!-- НОВО: Имейл за получаване на заявления -->
+                <div class="col-md-12">
+                    <label class="form-label fw-bold text-success">
+                        <i class="bi bi-envelope-at-fill me-1"></i> Имейл за контакт (за автоматично изпращане на заявленията):
+                    </label>
+                    <input asp-for="ContactEmail" type="email" class="form-control" placeholder="напр. fund@organization.bg" />
+                    <span asp-validation-for="ContactEmail" class="text-danger small"></span>
+                    <small class="text-muted">На този имейл адрес системата ще изпраща формулярите и документите на кандидатите.</small>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Валидна от:</label>
+                    <input asp-for="ValidFrom" type="date" class="form-control" value="@Model.ValidFrom.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Валидна до:</label>
+                    <input asp-for="ValidTo" type="date" class="form-control" value="@Model.ValidTo.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold">Формуляри и Бутони (Формат: Име на бутона | URL — всеки на нов ред):</label>
+                    <textarea name="rawFormUrls" class="form-control font-monospace" rows="4">@ViewBag.RawFormUrls</textarea>
+                </div>
+                <div class="col-12">
+    <div class="p-4 rounded-4 border bg-light">
+        <h5 class="fw-bold text-dark mb-3">
+            <i class="bi bi-file-earmark-check-fill text-success me-2"></i>
+            Задължителни документи
+        </h5>
+
+        <p class="text-muted small">
+            Изберете документите, които кандидатът трябва да има,
+            преди да изпрати заявление.
+        </p>
+
+        <div class="row g-3">
+            @foreach (var type in new[]
+            {
+                "Смъртен акт",
+                "ТЕЛК",
+                "Уверение за студент",
+                "Уверение за ученик",
+                "Друго"
+            })
+            {
+                var checkboxId = "required_" +
+                    type.GetHashCode().ToString("X").Replace("-", "");
+
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                           type="checkbox"
+                           name="requiredDocumentTypes"
+                           value="@type"
+                           id="@checkboxId"
+                           checked="@(Model.RequiredDocuments.Any(
+                               d => d.DocumentType == type))" />
+
+                        <label class="form-check-label fw-semibold"
+                               for="@checkboxId">
+                            @type
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+                <div class="col-12 pt-3">
+                    <button type="submit" class="btn-3d">
+                        <span class="button_top">
+                            <i class="bi bi-check-lg me-1"></i> Запази Промените
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

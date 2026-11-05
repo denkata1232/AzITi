@@ -1,0 +1,134 @@
+@{
+    ViewData["Title"] = "Намери за мен — Интелигентен съветник";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .finder-glass {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .form-select, .form-control {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(52, 78, 65, 0.2);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: #588157;
+        box-shadow: 0 0 0 0.25rem rgba(88, 129, 87, 0.25);
+    }
+
+    /* UIVERSE 3D BUTTON */
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.85em 1.75em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+</style>
+
+<div class="container py-5" style="max-width: 700px;">
+    <div class="finder-glass p-4 p-md-5">
+        
+        <div class="text-center mb-4">
+            <span class="badge px-3 py-2 rounded-pill fw-semibold mb-2" style="background-color: #588157; color: white;">
+                <i class="bi bi-magic me-1"></i> Интелигентен съветник
+            </span>
+            <h2 class="fw-bold text-dark">Каква помощ търсиш?</h2>
+            <p class="text-secondary small">Отговори на няколко бързи въпроса, за да открием най-подходящите активни кампании за теб.</p>
+        </div>
+
+        <form asp-action="Match" method="post">
+            
+            <!-- Question 1: Education Level -->
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark">1. Твоята образователна степен или статус:</label>
+                <select name="educationLevel" class="form-select">
+                <option value="">-- Избери статус --</option>
+                <option value="HighSchoolers">Ученик (гимназиален етап)</option>
+                <option value="Students">Студент (бакалавър / магистър)</option>
+                <option value="All">Всички / Обща подкрепа</option>
+                </select>
+            </div>
+
+            <!-- Question 2: Aid Type -->
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark">2. Тип подкрепа или помощ:</label>
+                <select name="aidType" class="form-select">
+                    <option value="">-- Избери тип помощ --</option>
+                    <option value="стипендия">Стипендия</option>
+                    <option value="финансова">Финансова помощ / Издръжка</option>
+                    <option value="материална">Материална подкрепа / Учебници / Техника</option>
+                </select>
+            </div>
+
+            <!-- Question 3: Keyword / Specific need -->
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark">3. Специфична ключова дума (по желание):</label>
+                <input type="text" name="keyword" class="form-control" placeholder="напр. спорт, изкуство, социални..." />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-2">
+                <button type="submit" class="btn-3d">
+                    <span class="button_top">
+                        Сортирай и намери помощи <i class="bi bi-search ms-2"></i>
+                    </span>
+                </button>
+            </div>
+
+        </form>
+
+        <div class="text-center mt-4">
+            <a asp-action="Index" class="text-secondary text-decoration-none small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Към всички кампании
+            </a>
+        </div>
+
+    </div>
+</div>

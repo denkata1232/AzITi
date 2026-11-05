@@ -1,0 +1,273 @@
+@{
+    ViewData["Title"] = "За нас - Екипът на Аз и ти";
+}
+
+<style>
+    /* ========== PAGE BACKGROUND & STYLES ========== */
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .about-glass {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .team-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 28px rgba(52, 78, 65, 0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 32px rgba(52, 78, 65, 0.18);
+    }
+
+    .badge-about {
+        background-color: #588157;
+        color: white;
+    }
+
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #588157;
+        background-color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .avatar-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .bio-box {
+        background-color: rgba(218, 215, 205, 0.45);
+        border-left: 4px solid #588157;
+        border-radius: 0.5rem;
+        padding: 0.85rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    /* UIVERSE 3D BUTTON */
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- HERO HEADER -->
+    <div class="about-glass p-4 p-md-5 mb-5 text-center">
+        <span class="badge badge-about px-3 py-2 rounded-pill fw-semibold mb-3">
+            <i class="bi bi-people-fill me-1"></i> За Авторите на Проекта
+        </span>
+        <h1 class="display-4 fw-bold text-dark mb-3">Екипът зад „Аз и ти“</h1>
+        <p class="lead text-secondary mx-auto mb-0" style="max-width: 760px;">
+            Ние сме 5-ма студенти, обединени от страстта си към софтуерните технологии и желанието да създадем дигитални решения с реално обществено значение.
+        </p>
+    </div>
+
+    <!-- TEAM MEMBERS SECTION -->
+    <div class="row g-4 mb-5">
+
+        <!-- Member 1: Михаил Томов -->
+        <div class="col-12">
+            <div class="team-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-wrapper mb-3">
+                            <!-- Замени с твоя снимка в wwwroot/images/mihail.jpg -->
+                            <img src="~/images/mihail.png" alt="Михаил Томов" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Михаил+Томов&background=588157&color=fff&size=128';" />
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Михаил Томов</h4>
+                        <span class="badge bg-light text-success border fw-semibold mb-2">Софтуерен разработчик</span>
+                    </div>
+
+                    <div class="col-md-9 border-start-md ps-md-4">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-person-badge text-success me-2"></i>За мен</h5>
+                        <div class="bio-box text-secondary mb-3">
+                            Студент по „Интелигентни системи и изкуствен интелект“. Имам опит в разработването на софтуерни приложения за реалния бизнес, сред които уеб платформа за ветеринарен мениджмънт и мобилно iOS приложение за инвентаризация.
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-white text-dark border"><i class="bi bi-code-slash text-success me-1"></i> ИСИИ</span>
+                            <span class="badge bg-white text-dark border"><i class="bi bi-hospital text-success me-1"></i> Vet Management Web App</span>
+                            <span class="badge bg-white text-dark border"><i class="bi bi-phone text-success me-1"></i> iOS Inventory App</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member 2: Денис -->
+        <div class="col-12">
+            <div class="team-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-wrapper mb-3">
+                            <img src="~/images/denis.jpg" alt="Денис" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Денис&background=588157&color=fff&size=128';" />
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Денис</h4>
+                        <span class="badge bg-light text-success border fw-semibold mb-2">Софтуерен инженер</span>
+                    </div>
+
+                    <div class="col-md-9 border-start-md ps-md-4">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-person-badge text-success me-2"></i>За мен</h5>
+                        <div class="bio-box text-secondary mb-3">
+                            Кратка автобиография и информация за Денис предстои да бъде добавена тук.
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-white text-dark border"><i class="bi bi-laptop text-success me-1"></i> Софтуерни технологии</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member 3: Георги -->
+        <div class="col-12">
+            <div class="team-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-wrapper mb-3">
+                            <img src="~/images/georgi.jpg" alt="Георги" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Георги&background=588157&color=fff&size=128';" />
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Георги</h4>
+                        <span class="badge bg-light text-success border fw-semibold mb-2">Софтуерен инженер</span>
+                    </div>
+
+                    <div class="col-md-9 border-start-md ps-md-4">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-person-badge text-success me-2"></i>За мен</h5>
+                        <div class="bio-box text-secondary mb-3">
+                            Кратка автобиография и информация за Георги предстои да бъде добавена тук.
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-white text-dark border"><i class="bi bi-laptop text-success me-1"></i> Софтуерни технологии</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member 4: Мартин -->
+        <div class="col-12">
+            <div class="team-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-wrapper mb-3">
+                            <img src="~/images/martin.jpg" alt="Мартин" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Мартин&background=588157&color=fff&size=128';" />
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Мартин</h4>
+                        <span class="badge bg-light text-success border fw-semibold mb-2">Софтуерен инженер</span>
+                    </div>
+
+                    <div class="col-md-9 border-start-md ps-md-4">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-person-badge text-success me-2"></i>За мен</h5>
+                        <div class="bio-box text-secondary mb-3">
+                            Кратка автобиография и информация за Мартин предстои да бъде добавена тук.
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-white text-dark border"><i class="bi bi-laptop text-success me-1"></i> Софтуерни технологии</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member 5: Колега 5 -->
+        <div class="col-12">
+            <div class="team-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-wrapper mb-3">
+                            <img src="~/images/colleague5.jpg" alt="Колега" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Член+5&background=588157&color=fff&size=128';" />
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Колега</h4>
+                        <span class="badge bg-light text-success border fw-semibold mb-2">Софтуерен инженер</span>
+                    </div>
+
+                    <div class="col-md-9 border-start-md ps-md-4">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-person-badge text-success me-2"></i>За мен</h5>
+                        <div class="bio-box text-secondary mb-3">
+                            Кратка автобиография и информация за петия член от екипа предстои да бъде добавена тук.
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-white text-dark border"><i class="bi bi-laptop text-success me-1"></i> Софтуерни технологии</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CALL TO ACTION / FOOTNOTE -->
+    <div class="about-glass p-4 p-md-5 text-center">
+        <h3 class="fw-bold text-dark mb-2">Имате въпроси или искате да си партнираме?</h3>
+        <p class="text-secondary mb-4">
+            Винаги сме отворени за нови идеи, интеграции и сътрудничества в подкрепа на българските младежи.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Home" asp-action="Partners" class="btn-3d">
+                <span class="button_top">
+                    Виж нашите партньори <i class="bi bi-handshake ms-1"></i>
+                </span>
+            </a>
+            <a asp-controller="AidCampaigns" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 align-self-center fw-semibold py-2">
+                Към кампаниите
+            </a>
+        </div>
+    </div>
+
+</div>

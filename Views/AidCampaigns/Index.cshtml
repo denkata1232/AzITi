@@ -1,0 +1,159 @@
+@model IEnumerable<NiePostigame.ViewModels.CampaignListViewModel>
+
+@{
+    ViewData["Title"] = "Активни Кампании";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .campaign-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .campaign-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 32px rgba(52, 78, 65, 0.18);
+    }
+
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+</style>
+
+<div class="container py-5">
+    
+    <div class="text-center mb-5">
+        <span class="badge px-3 py-2 rounded-pill fw-semibold mb-2" style="background-color: #588157; color: white;">
+            <i class="bi bi-collection-fill me-1"></i> Каталог за подкрепа
+        </span>
+        <h1 class="display-5 fw-bold text-dark">Всички Кампании и Стипендии</h1>
+        <p class="text-secondary lead mx-auto" style="max-width: 650px;">
+            Разгледайте наличните програми за подкрепа. Изберете кампания, за да научите повече и да кандидатствате.
+        </p>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var campaign in Model)
+            {
+                string rawTitle = campaign.Title ?? "Кампания";
+                string rawLogo = campaign.LogoUrl ?? "";
+                string logoSrc;
+
+                if (string.IsNullOrWhiteSpace(rawLogo))
+                {
+                    logoSrc = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(rawTitle)}&background=588157&color=fff&size=128";
+                }
+                else if (rawLogo.StartsWith("http://") || rawLogo.StartsWith("https://"))
+                {
+                    logoSrc = rawLogo;
+                }
+                else if (rawLogo.StartsWith("~/"))
+                {
+                    logoSrc = Url.Content(rawLogo);
+                }
+                else if (!rawLogo.Contains("/"))
+                {
+                    logoSrc = "/images/" + rawLogo;
+                }
+                else
+                {
+                    logoSrc = "/" + rawLogo.TrimStart('/');
+                }
+
+                <div class="col">
+                    <div class="campaign-card p-4 h-100 d-flex flex-column shadow-sm">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            @if (campaign.IsActive)
+                            {
+                                <span class="badge bg-success px-3 py-2 rounded-pill">Активна</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary px-3 py-2 rounded-pill">@campaign.StatusMessage</span>
+                            }
+                            <small class="text-muted fw-medium">До: @campaign.ValidTo.ToString("dd.MM.yyyy")</small>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="@logoSrc" 
+                                 alt="@rawTitle" 
+                                 style="width: 52px; height: 52px; object-fit: contain;" 
+                                 class="rounded bg-white p-1 border shadow-sm flex-shrink-0"
+                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(rawTitle)&background=588157&color=fff&size=128';" />
+                            
+                            <h4 class="fw-bold text-dark mb-0">@rawTitle</h4>
+                        </div>
+
+                        <p class="text-secondary small mb-4 flex-grow-1">
+                            @campaign.Description
+                        </p>
+
+                        <div class="mt-auto">
+                            <a asp-action="Details" asp-route-id="@campaign.Id" class="btn-3d">
+                                <span class="button_top">
+                                    Отвори на цял екран <i class="bi bi-arrows-fullscreen ms-1"></i>
+                                </span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <h4 class="text-muted">В момента няма активни кампании.</h4>
+        </div>
+    }
+
+</div>

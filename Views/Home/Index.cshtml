@@ -1,0 +1,343 @@
+﻿@model IEnumerable<NiePostigame.Models.AidCampaign>
+
+@{
+    ViewData["Title"] = "Начало — Социална платформа Аз и ти";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .hero-glass {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.25s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(52, 78, 65, 0.15);
+    }
+
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.85em 1.75em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+
+    .partner-banner {
+        background: rgba(52, 78, 65, 0.88);
+        color: white;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .fade-in-element {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    .fade-in-element.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .hero-fade-in {
+        animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes heroFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- HERO SECTION -->
+    <div class="hero-glass p-4 p-md-5 mb-5 text-center position-relative overflow-hidden hero-fade-in">
+        <div class="mb-3">
+            <span class="badge px-3 py-2 rounded-pill fw-semibold" style="background-color: #588157; color: white;">
+                <i class="bi bi-heart-fill text-warning me-1"></i> Социална платформа „Аз и ти“
+            </span>
+        </div>
+        
+        <h1 class="display-3 fw-bold text-dark mb-3 tracking-tight">
+            Ръка за ръка към по-добро бъдеще
+        </h1>
+        
+        <p class="lead text-secondary mx-auto mb-4" style="max-width: 760px; font-size: 1.2rem;">
+            Автоматизираме, дигитализираме и улесняваме кандидатстването за стипендии и подкрепа за ученици и студенти без родтел/и.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+            <a asp-controller="AidCampaigns" asp-action="Index" class="btn-3d">
+                <span class="button_top">
+                    Към активните кампании <i class="bi bi-arrow-right ms-2"></i>
+                </span>
+            </a>
+            <a asp-controller="AidCampaigns" asp-action="Finder" class="btn-3d" style="--button_color: #DAD7CD; --button_outline_color: #344E41;">
+                <span class="button_top text-dark">
+                    <i class="bi bi-magic text-success me-1"></i> Намери за мен
+                </span>
+            </a>
+            <a asp-controller="Home" asp-action="Partners" class="btn btn-outline-dark rounded-pill px-4 align-self-center fw-semibold py-2">
+                За нашите партньори
+            </a>
+        </div>
+
+        <div class="row g-3 justify-content-center pt-3 border-top mt-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <h2 class="fw-bold text-dark mb-0">@(ViewBag.ActiveCampaignsCount ?? 1)+</h2>
+                    <small class="text-muted fw-medium">Активни кампании</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <h2 class="fw-bold text-dark mb-0">100%</h2>
+                    <small class="text-muted fw-medium">Безплатна платформа</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card ">
+                    <h2 class="fw-bold text-dark mb-0">sampostigam.org </h2>
+                    <small class="text-muted fw-medium">Основен партньор</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURED CAMPAIGNS -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="partner-banner p-4 p-md-5 mb-5 shadow-lg fade-in-element">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-2">Възможности</span>
+                    <h3 class="fw-bold text-white mb-0">🔥 Актуални кампании</h3>
+                    <small class="text-light opacity-75">Прегледай най-новите възможности за подкрепа</small>
+                </div>
+                <a asp-controller="AidCampaigns" asp-action="Index" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-success shadow-sm">
+                    Виж всички (@(ViewBag.ActiveCampaignsCount ?? 0)) <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                @foreach (var campaign in Model.Take(2))
+                {
+                    string rawTitle = campaign.Title ?? "Кампания";
+                    string rawLogo = campaign.LogoUrl ?? "";
+                    string logoSrc;
+
+                    if (string.IsNullOrWhiteSpace(rawLogo))
+                    {
+                        logoSrc = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(rawTitle)}&background=588157&color=fff&size=128";
+                    }
+                    else if (rawLogo.StartsWith("http://") || rawLogo.StartsWith("https://"))
+                    {
+                        logoSrc = rawLogo;
+                    }
+                    else if (rawLogo.StartsWith("~/"))
+                    {
+                        logoSrc = Url.Content(rawLogo);
+                    }
+                    else if (!rawLogo.Contains("/"))
+                    {
+                        logoSrc = "/images/" + rawLogo;
+                    }
+                    else
+                    {
+                        logoSrc = "/" + rawLogo.TrimStart('/');
+                    }
+
+                    <div class="col fade-in-element">
+                        <div class="feature-card p-4 h-100 d-flex flex-column">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="badge px-3 py-2 rounded-pill" style="background-color: #588157; color: white;">Активна</span>
+                                <small class="text-muted fw-medium">Валидна до: @campaign.ValidTo.ToString("dd.MM.yyyy")</small>
+                            </div>
+                            
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <img src="@logoSrc" 
+                                     alt="@rawTitle" 
+                                     style="width: 48px; height: 48px; object-fit: contain;" 
+                                     class="rounded bg-white p-1 border shadow-sm"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(rawTitle)&background=588157&color=fff&size=128';" />
+                                
+                                <h4 class="fw-bold text-dark mb-0">@rawTitle</h4>
+                            </div>
+
+                            <p class="text-secondary small mb-4 flex-grow-1">
+                                @campaign.Description
+                            </p>
+
+                            <div>
+                                <a asp-controller="AidCampaigns" asp-action="Details" asp-route-id="@campaign.Id" class="btn-3d w-100 text-center">
+                                    <span class="button_top">
+                                        Виж изискванията и кандидатствай <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- PARTNER SPOTLIGHT BANNER -->
+    <div class="partner-banner p-4 p-md-5 mb-5 shadow-lg fade-in-element">
+        <div class="row align-items-center gy-4">
+            <div class="col-md-8">
+                <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill mb-2">Мисия & Партньорство</span>
+                <h3 class="fw-bold text-white mb-2">В сътрудничество с фоднация sampostigam.org</h3>
+                <p class="text-light opacity-87 mb-0">
+                    Създадохме дигиталния мост между учениците, търсещи подкрепа, и каузата samopostigam.org. Платформата <strong>„Аз и ти“</strong> улеснява попълването и подаването на необходимите документи за броени минути.
+                </p>
+            </div>
+            <div class="col-md-4 text-center text-md-end">
+                <a asp-controller="Home" asp-action="Partners" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-success shadow-sm">
+                    Прочети историята <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="text-center mb-4 fade-in-element">
+        <h3 class="fw-bold text-dark mb-2">Как работи за кандидатстващите?</h3>
+        <p class="text-secondary">Три лесни стъпки от откриването до изпращането</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col fade-in-element">
+            <div class="feature-card p-4 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle p-3 mb-3 border shadow-sm" style="width: 64px; height: 64px;">
+                    <i class="bi bi-search fs-3 text-success"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">1. Откриване</h5>
+                <p class="text-secondary small mb-0">
+                    Намери активни кампании за частни помощи, филтрирани по критерии и срокове.
+                </p>
+            </div>
+        </div>
+
+        <div class="col fade-in-element">
+            <div class="feature-card p-4 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle p-3 mb-3 border shadow-sm" style="width: 64px; height: 64px;">
+                    <i class="bi bi-file-earmark-text fs-3 text-success"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">2. Подготовка</h5>
+                <p class="text-secondary small mb-0">
+                    Изтегли нужните бланки и онлайн формуляри директно с един клик.
+                </p>
+            </div>
+        </div>
+
+        <div class="col fade-in-element">
+            <div class="feature-card p-4 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle p-3 mb-3 border shadow-sm" style="width: 64px; height: 64px;">
+                    <i class="bi bi-send-check fs-3 text-success"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">3. Подаване</h5>
+                <p class="text-secondary small mb-0">
+                    Кандидатствай лесно и без излишна бюрокрация.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll(".fade-in-element");
+            animatedElements.forEach(el => observer.observe(el));
+        });
+    </script>
+}

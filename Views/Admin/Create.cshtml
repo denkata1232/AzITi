@@ -1,0 +1,244 @@
+@model NiePostigame.Models.AidCampaign
+
+@{
+    ViewData["Title"] = "Админ Панел — Добавяне на кампания";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .admin-glass {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    .nav-tabs .nav-link {
+        color: #344E41;
+        font-weight: 600;
+        border-radius: 0.75rem 0.75rem 0 0;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #588157;
+        color: white !important;
+        border-color: #588157;
+    }
+
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+        text-align: center;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="admin-glass p-4 p-md-5">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <div>
+                <span class="badge bg-success px-3 py-2 rounded-pill mb-1">Администрация</span>
+                <h2 class="fw-bold text-dark mb-0">Добавяне на Нова Кампания</h2>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-dark rounded-pill fw-semibold">
+                <i class="bi bi-list me-1"></i> Списък Кампании
+            </a>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- TABS SWITCHER -->
+        <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="quick-tab" data-bs-toggle="tab" data-bs-target="#quick-parse" type="button" role="tab">
+                    ⚡ Бърз Внос (Копирай & Постави Текст)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual-entry" type="button" role="tab">
+                    ✍️ Ръчно Попълване
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+            
+            <!-- TAB 1: QUICK PARSE -->
+            <div class="tab-pane fade show active" id="quick-parse" role="tabpanel">
+                <div class="p-3 bg-light rounded-3 border mb-4">
+                    <h6 class="fw-bold text-dark mb-1">💡 Формат за бърз внос:</h6>
+                    <small class="text-secondary d-block">
+                        За да зададете име на бутона, използвайте формата <code>[Име на бутона](https://линк)</code>:<br />
+                        <code>"Заглавие" , "Описание" , "Тип подкрепа" , "Изискване" , logo.png , YYYY.M.D-YYYY.M.D , [Кандидатствай](https://link1.com)</code>
+                    </small>
+                </div>
+
+                <form asp-action="ParseText" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Текст за кампанията:</label>
+                        <textarea name="rawText" class="form-control font-monospace" rows="4" placeholder='"Стипендиантска програма" , "Описание..." , "Стипендия" , "Изисквания..." , logo.png , 2026.9.10-2026.10.15 , [Кандидатствай онлайн](https://site.com/apply)'></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-3d">
+                        <span class="button_top">
+                            <i class="bi bi-magic me-1"></i> Парсирай и Запази
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 2: MANUAL ENTRY -->
+            <div class="tab-pane fade" id="manual-entry" role="tabpanel">
+                <form asp-controller="Admin"
+                      asp-action="CreateManual"
+                      method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Заглавие:</label>
+                            <input asp-for="Title" class="form-control" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Тип подкрепа (AidType):</label>
+                            <input asp-for="AidType" class="form-control" placeholder="Стипендия / Финансова / Материална" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Описание:</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Основни изисквания:</label>
+                            <input asp-for="SimplifiedRequirement" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Лого (URL или име на файл):</label>
+                            <input asp-for="LogoUrl" class="form-control" />
+                        </div>
+
+                        <!-- НОВО: Имейл за получаване на заявления -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold text-success">
+                                <i class="bi bi-envelope-at-fill me-1"></i> Имейл за контакт (за автоматично изпращане на заявленията):
+                            </label>
+                            <input asp-for="ContactEmail" type="email" class="form-control" placeholder="напр. fund@organization.bg" />
+                            <span asp-validation-for="ContactEmail" class="text-danger small"></span>
+                            <small class="text-muted">На този имейл адрес системата ще изпраща формулярите и документите на кандидатите.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Валидна от:</label>
+                            <input asp-for="ValidFrom" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Валидна до:</label>
+                            <input asp-for="ValidTo" type="date" class="form-control" value="@DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Формуляри (Формат: Име на бутона | URL — всеки на нов ред):</label>
+                            <textarea name="rawFormUrls" class="form-control font-monospace" rows="3" placeholder="Кандидатствай онлайн | https://example.com/form&#10;Правила за кандидатстване | https://example.com/rules.pdf"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-4 rounded-4 border bg-light">
+                                <h5 class="fw-bold text-dark mb-3">
+                                    <i class="bi bi-file-earmark-check-fill text-success me-2"></i>
+                                    Задължителни документи
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Изберете документите, които кандидатът трябва да има,
+                                    преди да изпрати заявление.
+                                </p>
+
+                                <div class="row g-3">
+                                    @foreach (var type in new[]
+                                    {
+                                        "Смъртен акт",
+                                        "ТЕЛК",
+                                        "Уверение за студент",
+                                        "Уверение за ученик",
+                                        "Друго"
+                                    })
+                                    {
+                                        var checkboxId = "required_" +
+                                            type.GetHashCode().ToString("X").Replace("-", "");
+
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="requiredDocumentTypes"
+                                                       value="@type"
+                                                       id="@checkboxId" />
+
+                                                <label class="form-check-label fw-semibold"
+                                                       for="@checkboxId">
+                                                    @type
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 pt-2">
+                            <button type="submit" class="btn-3d">
+                                <span class="button_top">
+                                    <i class="bi bi-save me-1"></i> Запази Кампанията
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>

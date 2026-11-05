@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "Нашите Партньори";
+}
+
+<style>
+    /* ========== PAGE BACKGROUND & STYLES ========== */
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .partner-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.25rem;
+        box-shadow: 0 12px 32px rgba(52, 78, 65, 0.12);
+    }
+
+    .partner-badge {
+        background-color: #588157;
+        color: white;
+        font-size: 0.85rem;
+    }
+
+    .quote-box {
+        background-color: rgba(218, 215, 205, 0.45);
+        border-left: 4px solid #588157;
+        border-radius: 0.5rem;
+        font-style: italic;
+    }
+
+    /* ========== UIVERSE 3D BUTTON STYLES ========== */
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.33em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Section Header -->
+    <div class="text-center mb-5">
+        <span class="badge partner-badge px-3 py-2 rounded-pill fw-semibold mb-2">Заедно в каузата</span>
+        <h1 class="fw-bold text-dark display-5">Нашите Партньори</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 650px;">
+            Обединяваме усилия с водещи социални инициативи и организации за подкрепа на младежите в България.
+        </p>
+    </div>
+
+    <!-- Partner Card: Сам Постигам -->
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="partner-card p-4 p-md-5">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-4 text-center">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-white p-2 rounded-circle shadow-sm border mb-3" style="width: 120px; height: 120px; overflow: hidden;">
+                        <img src="~/images/sampostigam-logo.png" alt="Сам Постигам Лого" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                        </div>
+                        <h3 class="fw-bold text-dark mb-1">Сам Постигам</h3>
+                        <p class="text-muted small">sampostigam.org</p>
+                        
+                        <div class="mt-3">
+                            <button class="btn-3d" onclick="window.open('https://sampostigam.org', '_blank')">
+                                <span class="button_top">
+                                    Посети уебсайта <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 border-start-md ps-md-4">
+                        <p class="text-secondary small mb-3">
+                            "Фондация "Сам постигам" администрира информационния сайт за ученици и студенти без родител/и  sampostigam.org. Провеждаме собствен конкурс за стипендии "Гледам напред" и даваме индивидуални консултации за кандидатстване/получаване на стипендии и помощи за младежи без родител/и."
+                        </p>
+
+                        <div class="p-3 bg-white rounded-3 border">
+                            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-handshake text-success me-1"></i> Как си сътрудничим?</h6>
+                            <p class="small text-muted mb-0">
+                                Нашето уеб приложение <strong>„Аз и ти“</strong> дигитализира и автоматизира процеса по кандидатстване за частните помощи и стипендии, организирани и събирани от <strong>sampostigam.org</strong>, осигурявайки бърз и лесен достъп за всеки ученик и студент.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

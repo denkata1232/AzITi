@@ -1,0 +1,18 @@
+# Visual Studio temporary files
+.vs/
+**/.vs/
+
+# Build output
+bin/
+obj/
+**/bin/
+**/obj/
+
+# User-specific settings
+*.user
+*.suo
+
+# Local secrets and environment files
+.env
+.env.*
+**/appsettings.Development.json

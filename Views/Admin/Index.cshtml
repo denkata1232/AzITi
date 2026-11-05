@@ -1,0 +1,256 @@
+@model IEnumerable<NiePostigame.Models.AidCampaign>
+
+@{
+    ViewData["Title"] = "Админ Панел — Управление на кампании";
+}
+
+<style>
+    body {
+        background: #344E41;
+        background: linear-gradient(90deg, rgba(52, 78, 65, 1) 0%, rgba(218, 215, 205, 1) 12%, rgba(221, 216, 183, 1) 80%, rgba(52, 78, 65, 1) 100%);
+        min-height: 100vh;
+        color: #344E41;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Apple Glassmorphism Card Container */
+    .admin-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 16px 36px rgba(52, 78, 65, 0.15);
+    }
+
+    /* Glassmorphism Campaign Row Cards */
+    .campaign-item-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 1.25rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .campaign-item-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(52, 78, 65, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    /* UIVERSE 3D BUTTONS */
+    .btn-3d {
+        --button_radius: 0.75em;
+        --button_color: #A3B18A;
+        --button_outline_color: #344E41;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        display: inline-block;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.65em 1.25em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-3d:hover .button_top {
+        transform: translateY(-0.3em);
+        background: #b5c29e;
+    }
+
+    .btn-3d:active .button_top {
+        transform: translateY(0);
+    }
+
+    /* Danger 3D Button Variant for Delete */
+    .btn-3d-danger {
+        --button_color: #e63946;
+        --button_outline_color: #780000;
+    }
+
+    .btn-3d-danger .button_top {
+        color: #ffffff;
+    }
+
+    .btn-3d-danger:hover .button_top {
+        background: #f15bb5;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="admin-card p-4 p-md-5">
+        
+        <!-- HEADER -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3 gap-3">
+            <div>
+                <span class="badge px-3 py-2 rounded-pill fw-semibold mb-2" style="background-color: #588157; color: white;">
+                    <i class="bi bi-shield-lock-fill me-1"></i> Администрация
+                </span>
+                <h2 class="fw-bold text-dark mb-0">Управление на Кампании</h2>
+            </div>
+            
+            <a asp-action="Create" class="btn-3d">
+                <span class="button_top">
+                    <i class="bi bi-plus-lg me-1"></i> Добави Нова Кампания
+                </span>
+            </a>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" style="background: rgba(88, 129, 87, 0.15); color: #344E41;" role="alert">
+                <i class="bi bi-check-circle-fill me-2 text-success fs-5"></i> <strong>Успех!</strong> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- CAMPAIGN CARDS LIST -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var campaign in Model)
+                {
+                    string rawTitle = campaign.Title ?? "Кампания";
+                    string rawLogo = campaign.LogoUrl ?? "";
+                    string logoSrc;
+
+                    if (string.IsNullOrWhiteSpace(rawLogo))
+                    {
+                        logoSrc = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(rawTitle)}&background=588157&color=fff&size=128";
+                    }
+                    else if (rawLogo.StartsWith("http://") || rawLogo.StartsWith("https://"))
+                    {
+                        logoSrc = rawLogo;
+                    }
+                    else if (rawLogo.StartsWith("~/"))
+                    {
+                        logoSrc = Url.Content(rawLogo);
+                    }
+                    else if (!rawLogo.Contains("/"))
+                    {
+                        logoSrc = "/images/" + rawLogo;
+                    }
+                    else
+                    {
+                        logoSrc = "/" + rawLogo.TrimStart('/');
+                    }
+
+                    bool isActive = DateTime.Now >= campaign.ValidFrom && DateTime.Now <= campaign.ValidTo;
+
+                    <div class="campaign-item-card p-3 p-md-4">
+                        <div class="row align-items-center gy-3">
+                            
+                            <!-- LOGO & TITLE -->
+                            <div class="col-lg-4 col-md-6 d-flex align-items-center gap-3">
+                                <img src="@logoSrc" 
+                                     alt="@rawTitle" 
+                                     style="width: 52px; height: 52px; object-fit: contain;" 
+                                     class="rounded-3 bg-white p-1 border shadow-sm flex-shrink-0"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(rawTitle)&background=588157&color=fff&size=128';" />
+                                
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-1">@rawTitle</h5>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        @if (isActive)
+                                        {
+                                            <span class="badge bg-success rounded-pill px-2 py-1 small">Активна</span>
+                                        }
+                                        else if (DateTime.Now < campaign.ValidFrom)
+                                        {
+                                            <span class="badge bg-warning text-dark rounded-pill px-2 py-1 small">Предстои</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill px-2 py-1 small">Изтекла</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(campaign.AidType))
+                                        {
+                                            <span class="badge rounded-pill px-2 py-1 small" style="background-color: #588157; color: white;">
+                                                @campaign.AidType
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONTACT EMAIL & DETAILS -->
+                            <div class="col-lg-3 col-md-6">
+                                <div class="small mb-1">
+                                    <i class="bi bi-envelope-at me-1 text-success"></i>
+                                    <strong>Имейл за кандидатстване:</strong>
+                                </div>
+                                @if (!string.IsNullOrEmpty(campaign.ContactEmail))
+                                {
+                                    <span class="badge bg-light text-dark border px-2 py-1 fw-normal text-truncate" style="max-width: 100%;">
+                                        <i class="bi bi-mailbox me-1 text-success"></i> @campaign.ContactEmail
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-dark border border-warning px-2 py-1 fw-normal">
+                                        <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Липсва имейл
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- VALIDITY & FORMS INFO -->
+                            <div class="col-lg-2 col-md-6">
+                                <div class="small text-secondary mb-1">
+                                    <i class="bi bi-calendar3 me-1 text-success"></i>
+                                    <strong>Период:</strong><br />
+                                    @campaign.ValidFrom.ToString("dd.MM.yyyy") — @campaign.ValidTo.ToString("dd.MM.yyyy")
+                                </div>
+                            </div>
+
+                            <!-- ACTIONS WITH 3D BUTTONS -->
+                            <div class="col-lg-3 col-md-6 text-lg-end d-flex justify-content-lg-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@campaign.Id" class="btn-3d">
+                                    <span class="button_top py-2 px-3">
+                                        <i class="bi bi-pencil-square me-1"></i> Редактирай
+                                    </span>
+                                </a>
+
+                                <form asp-action="Delete" asp-route-id="@campaign.Id" method="post" class="d-inline" onsubmit="return confirm('Сигурни ли сте, че искате да изтриете кампанията „@rawTitle“?');">
+                                    <button type="submit" class="btn-3d btn-3d-danger">
+                                        <span class="button_top py-2 px-3">
+                                            <i class="bi bi-trash3 me-1"></i> Изтрий
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-3 text-muted mb-3 d-block"></i>
+                <h4 class="fw-bold text-dark mb-2">Все още няма добавени кампании</h4>
+                <p class="text-secondary mb-4">Използвайте бутона по-долу, за да добавите първата кампания ръчно или чрез бърз внос.</p>
+                <a asp-action="Create" class="btn-3d">
+                    <span class="button_top">
+                        <i class="bi bi-plus-lg me-1"></i> Добави Първа Кампания
+                    </span>
+                </a>
+            </div>
+        }
+
+    </div>
+</div>
